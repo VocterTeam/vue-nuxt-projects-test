@@ -2,16 +2,55 @@
   <section class="container">
     <h1 class="page-title">Homepage</h1>
 
+    <button type="button" @click="logout">Logout</button>
+
     <ul class="projects" v-if="projects && projects.length">
-      <li v-for="(project, index) in projects">
-        {{project}}
-        <button type="button" @click="editProject(project, index)">Edit Project</button>
+      <li
+        class="project-item"
+        v-for="(project, index) in projects"
+        @click="openEditModal(project, index)"
+        :key="project.id">
+        <!-- logo -->
+        <div class="project-item__block project-item__block--logo">
+          <img :src="project.logo" :alt="project.name" v-if="project.logo" />
+          <div class="default-avatar" v-else>{{project.name ? project.name.charAt(0) : ''}}</div>
+        </div>
+        
+        <!-- name -->
+        <div class="project-item__block project-item__block--name">
+          {{project.name}}
+        </div>
+
+        <!-- active -->
+        <div class="project-item__block project-item__block--active">
+          <div class="project-status" :class="{'active': project.is_active, 'inactive': !project.is_active}">{{ project.is_active ? 'Active' : 'Inactive'}}</div>
+        </div>
       </li>
     </ul>
+
+    <div class="edit-modal" v-if="updateProjectModalSettings.show">
+      <div class="edit-modal__inner">
+        <form action="#" id="edit-project-form" class="edit-project-form">
+          <label for="edit-name" class="edit-form-label">Name</label>
+          <input
+            type="text"
+            id="edit-name"
+            name="name"
+            @change="editName"
+            :value="updateProjectModalSettings.project.name" />
+
+          <div class="controls">
+            <button type="button" @click="closeEditModal">Back</button>
+            <button type="button" @click="editProject(updateProjectModalSettings.project, updateProjectModalSettings.index)">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </section>
 </template>
 
 <script>
+const Cookie = process.client ? require('js-cookie') : undefined
 import axios from 'axios'
 
 export default {
@@ -26,11 +65,70 @@ export default {
 
     return {projects: response.data.projects}
   },
+
+  data () {
+    return {
+      updateProjectModalSettings: {
+        show: false,
+        project: null,
+        index: undefined,
+        data: {}
+      }
+    }
+  },
+
+  methods: {
+    openEditModal (project, index) {
+      this.updateProjectModalSettings.show = true
+      this.updateProjectModalSettings.project = project
+      this.updateProjectModalSettings.index = index
+    },
+
+    editName ($event) {
+      let value = $event.currentTarget.value
+
+      if (value) {
+        this.$set(this.updateProjectModalSettings.data, 'name', value)
+      }
+    },
+
+    /**
+     * method fires when the user clicks on edit project
+     * @param  {Object} project - current object the user clicked on
+     * @param  {number} index - index of the current project in the array of projects
+    */
+    async editProject (project, index) {
+      let updatedName = this.updateProjectModalSettings.data.name
+
+      try {
+        let response = await axios.put(`https://api.quwi.com/v2/projects-manage/update?id=${project.id}`, {name: updatedName}, {
+          headers: {
+            Authorization: `Bearer ${this.$store.state.auth ? this.$store.state.auth.accessToken : ''}`
+          }
+        })
+
+        Object.assign(this.projects[index], response.data.project)
+        this.$nextTick(() => this.updateProjectModalSettings.show = false)
+      } catch(e) {
+        console.log('test', e)
+      }
+    },
+
+    closeEditModal () {
+      this.updateProjectModalSettings.show = false
+    },
+
+    logout () {
+      this.$store.commit('setAuth', null)
+      Cookie.remove('auth')
+      this.$router.push('/login')
+    }
+  }
 }
 
 </script>
 
-<style>
+<style scoped>
   body {
     background-color: #F4F4F4;
   }
@@ -44,5 +142,88 @@ export default {
   .page-title {
     text-transform: uppercase;
     margin-bottom: 15px;
+  }
+
+  .projects {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .project-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    cursor: pointer;
+    background-color: #fff;
+    border-radius: 3px;
+    border: 1px solid #dedede;
+    padding: 18px 20px 20px 25px;
+  }
+
+  .project-item__block {
+    flex: 1;
+    margin-right: 10px;
+  }
+
+  .project-item__block:last-of-type {
+    margin-right: 0;
+  }
+
+  .project-item__block--logo {
+    max-width: 65px;
+  }
+
+  .project-item__block--name {
+    flex: 2;
+  }
+
+  .default-avatar {
+    display: inline-flex;
+    height: 40px;
+    width: 40px;
+    font-size: 17px;
+    background: #ed874f;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    text-transform: uppercase;
+  }
+
+  .project-status.active {
+    color: green;
+  }
+
+  .project-status.inactive {
+    color: #d83c3c;
+  }
+  
+  .edit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+  }
+
+  .edit-modal__inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    padding: 20px;
+    color: #000;
+    background: #fff;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,.44);
+    transform: translate(-50%, -50%);
+  }
+
+  .edit-form-label {
+    display: inline-block;
+    margin-right: 25px;
   }
 </style>
