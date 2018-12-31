@@ -12,7 +12,7 @@
         :key="project.id">
         <!-- logo -->
         <div class="project-item__block project-item__block--logo">
-          <img :src="project.logo" :alt="project.name" v-if="project.logo" />
+          <img :src="project.logo" class="logo" :alt="project.name" v-if="project.logo" width="40px" height="40px" />
           <div class="default-avatar" v-else>{{project.name ? project.name.charAt(0) : ''}}</div>
         </div>
         
@@ -21,9 +21,34 @@
           {{project.name}}
         </div>
 
-        <!-- active -->
-        <div class="project-item__block project-item__block--active">
+        <!-- status -->
+        <div class="project-item__block project-item__block--status">
           <div class="project-status" :class="{'active': project.is_active, 'inactive': !project.is_active}">{{ project.is_active ? 'Active' : 'Inactive'}}</div>
+
+          <div class="users-status">
+            <template v-if="project.users && project.users.length">
+              {{project.users}}
+            </template>
+            <template v-else>No users</template>
+          </div>
+        </div>
+
+        <!-- stats -->
+        <div class="project-item__block project-item__block--stats">
+          <ul class="stats-list">
+            <li class="stats-row">
+              <span class="stats-row__title">time this week</span>
+                <span class="stats-row__value">{{project.spent_time_week}}</span>
+              </li>
+            <li class="stats-row">
+              <span class="stats-row__title">time this month</span>
+                <span class="stats-row__value">{{project.spent_time_month}}</span>
+              </li>
+            <li class="stats-row">
+              <span class="stats-row__title">total</span>
+                <span class="stats-row__value">{{project.spent_time_all}}</span>
+              </li>
+          </ul>
         </div>
       </li>
     </ul>
@@ -82,10 +107,22 @@ export default {
   },
 
   methods: {
-    openEditModal (project, index) {
+    async openEditModal (project, index) {
       this.updateProjectModalSettings.show = true
       this.updateProjectModalSettings.project = project
       this.updateProjectModalSettings.index = index
+
+      try {
+        let response = await axios.get(`https://api.quwi.com/v2/projects-manage/${project.id}`, {
+          headers: {
+            Authorization: `Bearer ${this.$store.state.auth ? this.$store.state.auth.accessToken : ''}`
+          }
+        })
+
+        updateProjectModalSettings.data = response.data
+      } catch (e) {
+        console.log('error', e)
+      }
     },
 
     editName ($event) {
@@ -188,6 +225,16 @@ export default {
     flex: 2;
   }
 
+  .project-item__block--status {
+    text-align: center;
+  }
+
+  .project-item__block--stats {
+    flex: 2;
+    margin-left: 32px;
+    min-width: 162px;
+  }
+
   .default-avatar {
     display: inline-flex;
     height: 40px;
@@ -274,5 +321,19 @@ export default {
     margin-right: 0;
     color: #fff;
     background: #395378;
+  }
+
+  .stats-list {
+    padding-left: 0;
+  }
+
+  .stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .logo {
+    object-fit: cover;
   }
 </style>
