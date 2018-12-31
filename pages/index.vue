@@ -108,7 +108,6 @@ export default {
 
   methods: {
     async openEditModal (project, index) {
-      this.updateProjectModalSettings.show = true
       this.updateProjectModalSettings.project = project
       this.updateProjectModalSettings.index = index
 
@@ -119,7 +118,8 @@ export default {
           }
         })
 
-        updateProjectModalSettings.data = response.data
+        this.updateProjectModalSettings.data = response.data
+        this.$nextTick(() => this.updateProjectModalSettings.show = true)
       } catch (e) {
         console.log('error', e)
       }
