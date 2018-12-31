@@ -210,6 +210,11 @@ export default {
     border-radius: 3px;
     border: 1px solid #dedede;
     padding: 18px 20px 20px 25px;
+    margin-bottom: 15px;
+  }
+
+  .project-item:last-of-type {
+    margin-bottom: 0;
   }
 
   .project-item:hover {
