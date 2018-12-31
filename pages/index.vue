@@ -27,7 +27,7 @@
 
           <div class="users-status">
             <template v-if="project.users && project.users.length">
-              {{project.users}}
+              {{project.users.length}}
             </template>
             <template v-else>No users</template>
           </div>
