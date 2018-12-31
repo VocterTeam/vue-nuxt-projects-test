@@ -61,7 +61,7 @@
             <label for="edit-name" class="edit-form-label">Name</label>
             <input
               ref="edit-name-input"
-              class="form-field"
+              class="form-edit-field"
               type="text"
               id="edit-name"
               name="name"
@@ -86,18 +86,9 @@ import axios from 'axios'
 export default {
   middleware: 'authenticated',
 
-  async asyncData ({ store }) {
-    let response = await axios.get('https://api.quwi.com/v2/projects', {
-      headers: {
-        Authorization: `Bearer ${store.state.auth ? store.state.auth.accessToken : ''}`
-      }
-    })
-
-    return {projects: response.data.projects}
-  },
-
   data () {
     return {
+      projects: [],
       updateProjectModalSettings: {
         show: false,
         project: null,
@@ -108,6 +99,16 @@ export default {
   },
 
   methods: {
+    async getProjects () {
+      let response = await axios.get('https://api.quwi.com/v2/projects', {
+        headers: {
+          Authorization: `Bearer ${this.$store.state.auth ? this.$store.state.auth.accessToken : ''}`
+        }
+      })
+
+      this.projects = response.data.projects
+    },
+
     async openEditModal (project, index) {
       this.updateProjectModalSettings.project = project
       this.updateProjectModalSettings.index = index
@@ -167,6 +168,10 @@ export default {
       Cookie.remove('auth')
       this.$router.push('/login')
     }
+  },
+
+  mounted () {
+    this.getProjects()
   }
 }
 
@@ -280,7 +285,7 @@ export default {
     transform: translate(-50%, -50%);
   }
 
-  .form-field {
+  .form-edit-field {
     padding: 10px;
   }
 
@@ -290,6 +295,8 @@ export default {
   }
 
   .edit-fields {
+    display: flex;
+    align-items: center;
     margin-bottom: 25px;
   }
 
