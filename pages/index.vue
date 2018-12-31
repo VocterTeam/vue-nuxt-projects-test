@@ -27,21 +27,25 @@
         </div>
       </li>
     </ul>
-
+  
+    <!-- edit modal -->
     <div class="edit-modal" v-if="updateProjectModalSettings.show">
       <div class="edit-modal__inner">
         <form action="#" id="edit-project-form" class="edit-project-form">
-          <label for="edit-name" class="edit-form-label">Name</label>
-          <input
-            type="text"
-            id="edit-name"
-            name="name"
-            @change="editName"
-            :value="updateProjectModalSettings.project.name" />
+          <div class="edit-fields">
+            <label for="edit-name" class="edit-form-label">Name</label>
+            <input
+              class="form-field"
+              type="text"
+              id="edit-name"
+              name="name"
+              @change="editName"
+              :value="updateProjectModalSettings.project.name" />
+          </div>
 
           <div class="controls">
-            <button type="button" @click="closeEditModal">Back</button>
-            <button type="button" @click="editProject(updateProjectModalSettings.project, updateProjectModalSettings.index)">Save</button>
+            <button type="button" class="controls-btn controls-btn--back" @click="closeEditModal">Back</button>
+            <button type="button" class="controls-btn controls-btn--save" @click="editProject(updateProjectModalSettings.project, updateProjectModalSettings.index)">Save</button>
           </div>
         </form>
       </div>
@@ -163,6 +167,10 @@ export default {
     padding: 18px 20px 20px 25px;
   }
 
+  .project-item:hover {
+    background: #ececec;
+  }
+
   .project-item__block {
     flex: 1;
     margin-right: 10px;
@@ -222,8 +230,49 @@ export default {
     transform: translate(-50%, -50%);
   }
 
+  .form-field {
+    padding: 10px;
+  }
+
   .edit-form-label {
     display: inline-block;
     margin-right: 25px;
+  }
+
+  .edit-fields {
+    margin-bottom: 25px;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .controls-btn {
+    margin-left: 15px;
+    min-width: 90px;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    height: 34px;
+    padding: 0 15px;
+    border-radius: 4px;
+  }
+
+  .controls-btn:hover {
+      opacity: .7;
+  }
+
+  .controls-btn--back {
+    background-color: #cecece;
+    border: 1px solid #bebebe;
+    text-shadow: 1px 1px 0 #ccc;
+  }
+
+  .controls-btn--save {
+    margin-right: 0;
+    color: #fff;
+    background: #395378;
   }
 </style>
