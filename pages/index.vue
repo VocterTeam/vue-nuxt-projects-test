@@ -60,6 +60,7 @@
           <div class="edit-fields">
             <label for="edit-name" class="edit-form-label">Name</label>
             <input
+              ref="edit-name-input"
               class="form-field"
               type="text"
               id="edit-name"
@@ -118,8 +119,10 @@ export default {
           }
         })
 
-        this.updateProjectModalSettings.data = response.data
-        this.$nextTick(() => this.updateProjectModalSettings.show = true)
+        this.updateProjectModalSettings.data = response.data.project
+        this.$nextTick(() => {
+          this.updateProjectModalSettings.show = true
+        })
       } catch (e) {
         console.log('error', e)
       }
