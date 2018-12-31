@@ -20,7 +20,12 @@
 </template>
 
 <script>
+const Cookie = process.client ? require('js-cookie') : undefined
+
+import {mapActions} from 'vuex'
+
 export default {
+	middleware: 'notAuthenticated',
 	data () {
 		return {
 			formData: {
@@ -53,6 +58,10 @@ export default {
 	},
 
 	methods: {
+		...mapActions([
+			'setAuth'
+		]),
+
 		/**
 		* sends request to login into the app
 		*/
@@ -60,8 +69,13 @@ export default {
 	    try {
 	      let response = await this.$axios.post('https://api.quwi.com/v2/auth/login', this.formData)
 	    	
-	      // this.setAuthToken(response.data.token)
-	      this.homePageRedirect()
+	      const auth = {
+          accessToken: response.data.token
+        }
+					
+				this.setAuth(auth) // mutating to store for client rendering
+	      Cookie.set('auth', auth) // saving token in cookie for server rendering
+	      this.$router.push('/')
 	    } catch (e) {
 	      if (e && e.response && e.response.data) {
 					if (e.response.data.first_errors) {
@@ -78,10 +92,6 @@ export default {
 	  setApiErrors (errors) {
 	  	this.apiErrors = errors
 	  },
-
-	  homePageRedirect () {
-	  	this.$router.push('/')
-	  }
 	}
 }
 </script>
