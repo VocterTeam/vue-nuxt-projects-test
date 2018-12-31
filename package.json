@@ -24,11 +24,3 @@
     "prettier": "1.14.3"
   }
 }
-
-# set Heroku variables
-heroku config:set NPM_CONFIG_PRODUCTION=false
-heroku config:set HOST=0.0.0.0
-heroku config:set NODE_ENV=production
-
-# deploy
-git push heroku master
