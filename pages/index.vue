@@ -38,15 +38,15 @@
           <ul class="stats-list">
             <li class="stats-row">
               <span class="stats-row__title">time this week</span>
-                <span class="stats-row__value">{{project.spent_time_week}}</span>
+                <span class="stats-row__value">{{project.spent_time_week | formattedDate}}</span>
               </li>
             <li class="stats-row">
-              <span class="stats-row__title">time this month</span>
-                <span class="stats-row__value">{{project.spent_time_month}}</span>
+              <span class="stats-row__title">this month</span>
+                <span class="stats-row__value">{{project.spent_time_month | formattedDate}}</span>
               </li>
             <li class="stats-row">
               <span class="stats-row__title">total</span>
-                <span class="stats-row__value">{{project.spent_time_all}}</span>
+                <span class="stats-row__value">{{project.spent_time_all | formattedDate}}</span>
               </li>
           </ul>
         </div>
@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 const Cookie = process.client ? require('js-cookie') : undefined
 import axios from 'axios'
 import EditModal from '@/components/EditModal.vue'
@@ -72,6 +73,12 @@ export default {
 
   components: {
     EditModal
+  },
+
+  filters: {
+    formattedDate (timeValue = 0) {
+      return moment(timeValue, 'HH').format('HH:mm:ss')
+    }
   },
 
   data () {
@@ -194,6 +201,7 @@ export default {
     border: 1px solid #dedede;
     padding: 18px 20px 20px 25px;
     margin-bottom: 6px;
+    font-size: .9em;
   }
 
   .project-item:last-of-type {
@@ -222,17 +230,24 @@ export default {
   .project-item__block--name {
     flex: 2;
     font-weight: 700;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   .project-item__block--status {
+    flex: 2;
     text-align: center;
     font-weight: 700;
+    margin-right: 0;
   }
 
   .project-item__block--stats {
     flex: 2;
     margin-left: 32px;
     min-width: 162px;
+    max-width: 162px;
+    white-space: nowrap;
   }
 
   .default-avatar {
@@ -264,6 +279,10 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+  }
+
+  .stats-row__title {
+    font-size: 12.6px;
   }
 
   .stats-row__value {
