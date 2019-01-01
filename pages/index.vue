@@ -38,15 +38,15 @@
           <ul class="stats-list">
             <li class="stats-row">
               <span class="stats-row__title">time this week</span>
-                <span class="stats-row__value">{{project.spent_time_week | formattedDate}}</span>
+                <span class="stats-row__value">{{project.spent_time_week ? project.spent_time_week : 0  | formattedDate}}</span>
               </li>
             <li class="stats-row">
               <span class="stats-row__title">this month</span>
-                <span class="stats-row__value">{{project.spent_time_month | formattedDate}}</span>
+                <span class="stats-row__value">{{project.spent_time_month ? project.spent_time_month : 0  | formattedDate}}</span>
               </li>
             <li class="stats-row">
               <span class="stats-row__title">total</span>
-                <span class="stats-row__value">{{project.spent_time_all | formattedDate}}</span>
+                <span class="stats-row__value">{{project.spent_time_all ? project.spent_time_all : 0 | formattedDate}}</span>
               </li>
           </ul>
         </div>
