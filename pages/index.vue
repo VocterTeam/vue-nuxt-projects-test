@@ -80,7 +80,7 @@
 </template>
 
 <script>
-// const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = process.client ? require('js-cookie') : undefined
 import axios from 'axios'
 
 export default {
@@ -165,7 +165,7 @@ export default {
 
     logout () {
       this.$store.commit('setAuth', null)
-      // Cookie.remove('auth')
+      Cookie.remove('auth')
       this.$router.push('/login')
     }
   },
