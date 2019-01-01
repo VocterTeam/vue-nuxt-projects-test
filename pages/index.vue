@@ -98,17 +98,17 @@ export default {
     }
   },
 
+  async asyncData ({store}) {
+    let response = await axios.get('https://api.quwi.com/v2/projects', {
+      headers: {
+        Authorization: `Bearer ${store.state.auth ? store.state.auth.accessToken : ''}`
+      }
+    })
+
+    return {projects: response.data.projects}
+  },
+
   methods: {
-    async getProjects () {
-      let response = await axios.get('https://api.quwi.com/v2/projects', {
-        headers: {
-          Authorization: `Bearer ${this.$store.state.auth ? this.$store.state.auth.accessToken : ''}`
-        }
-      })
-
-      this.projects = response.data.projects
-    },
-
     async openEditModal (project, index) {
       this.updateProjectModalSettings.project = project
       this.updateProjectModalSettings.index = index
@@ -169,10 +169,6 @@ export default {
       this.$router.push('/login')
     }
   },
-
-  mounted () {
-    this.getProjects()
-  }
 }
 
 </script>
