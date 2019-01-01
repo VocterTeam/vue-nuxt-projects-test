@@ -54,37 +54,25 @@
     </ul>
   
     <!-- edit modal -->
-    <div class="edit-modal" v-if="updateProjectModalSettings.show">
-      <div class="edit-modal__inner">
-        <form action="#" id="edit-project-form" class="edit-project-form">
-          <div class="edit-fields">
-            <label for="edit-name" class="edit-form-label">Name</label>
-            <input
-              ref="edit-name-input"
-              class="form-edit-field"
-              type="text"
-              id="edit-name"
-              name="name"
-              @change="editName"
-              :value="updateProjectModalSettings.project.name" />
-          </div>
-
-          <div class="controls">
-            <button type="button" class="controls-btn controls-btn--back" @click="closeEditModal">Back</button>
-            <button type="button" class="controls-btn controls-btn--save" @click="editProject(updateProjectModalSettings.project, updateProjectModalSettings.index)">Save</button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <edit-modal
+      :settings="updateProjectModalSettings"
+      v-if="updateProjectModalSettings.show"
+      @save="onEditProject"
+      @close="closeEditModal" />
   </section>
 </template>
 
 <script>
 const Cookie = process.client ? require('js-cookie') : undefined
 import axios from 'axios'
+import EditModal from '@/components/EditModal.vue'
 
 export default {
   middleware: 'authenticated',
+
+  components: {
+    EditModal
+  },
 
   data () {
     return {
@@ -98,6 +86,11 @@ export default {
     }
   },
 
+  /**
+   * asyncData taken from the api
+   * @param  {Object} options.store - app's store
+   * @return {Object}               - Object which consists of the array of projects
+   */
   async asyncData ({store}) {
     let response = await axios.get('https://api.quwi.com/v2/projects', {
       headers: {
@@ -109,6 +102,11 @@ export default {
   },
 
   methods: {
+    /**
+     * opens edit modal, sets the proper data taken from the api
+     * @param  {Object} project - project which needs to be updated
+     * @param  {number} index - project's number
+    */
     async openEditModal (project, index) {
       this.updateProjectModalSettings.project = project
       this.updateProjectModalSettings.index = index
@@ -129,40 +127,27 @@ export default {
       }
     },
 
-    editName ($event) {
-      let value = $event.currentTarget.value
+    /**
+     * callback fires on save event from edit-modal component
+     * @param  {Object} options.project - updated project
+     * @param  {number} options.index - updated project's index
+    */
+    onEditProject ({project, index}) {
+      Object.assign(this.projects[index], project)
 
-      if (value) {
-        this.$set(this.updateProjectModalSettings.data, 'name', value)
-      }
+      this.$nextTick(() => this.updateProjectModalSettings.show = false)
     },
 
     /**
-     * method fires when the user clicks on edit project
-     * @param  {Object} project - current object the user clicked on
-     * @param  {number} index - index of the current project in the array of projects
+     * close the edit modal
     */
-    async editProject (project, index) {
-      let updatedName = this.updateProjectModalSettings.data.name
-
-      try {
-        let response = await axios.put(`https://api.quwi.com/v2/projects-manage/update?id=${project.id}`, {name: updatedName}, {
-          headers: {
-            Authorization: `Bearer ${this.$store.state.auth ? this.$store.state.auth.accessToken : ''}`
-          }
-        })
-
-        Object.assign(this.projects[index], response.data.project)
-        this.$nextTick(() => this.updateProjectModalSettings.show = false)
-      } catch(e) {
-        console.log('test', e)
-      }
-    },
-
     closeEditModal () {
       this.updateProjectModalSettings.show = false
     },
 
+    /**
+     * logout from app
+    */
     logout () {
       this.$store.commit('setAuth', null)
       Cookie.remove('auth')
@@ -263,75 +248,6 @@ export default {
 
   .project-status.inactive {
     color: #d83c3c;
-  }
-  
-  .edit-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 9999;
-  }
-
-  .edit-modal__inner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 600px;
-    padding: 20px;
-    color: #000;
-    background: #fff;
-    box-shadow: 0 0 5px 0 rgba(0,0,0,.44);
-    transform: translate(-50%, -50%);
-  }
-
-  .form-edit-field {
-    padding: 10px;
-  }
-
-  .edit-form-label {
-    display: inline-block;
-    margin-right: 25px;
-  }
-
-  .edit-fields {
-    display: flex;
-    align-items: center;
-    margin-bottom: 25px;
-  }
-
-  .controls {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  .controls-btn {
-    margin-left: 15px;
-    min-width: 90px;
-    border: none;
-    cursor: pointer;
-    text-transform: uppercase;
-    height: 34px;
-    padding: 0 15px;
-    border-radius: 4px;
-  }
-
-  .controls-btn:hover {
-      opacity: .7;
-  }
-
-  .controls-btn--back {
-    background-color: #cecece;
-    border: 1px solid #bebebe;
-    text-shadow: 1px 1px 0 #ccc;
-  }
-
-  .controls-btn--save {
-    margin-right: 0;
-    color: #fff;
-    background: #395378;
   }
 
   .stats-list {
