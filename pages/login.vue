@@ -46,6 +46,10 @@ export default {
 	},
 
 	computed: {
+		/**
+		 * property checks if apiErrors has some values
+		 * @return {Boolean} true if apiErrors has some values false if not
+		 */
 		hasApiErrors () {
 	    for (var prop in this.apiErrors) {
 	        if (this.apiErrors.hasOwnProperty(prop)) {
@@ -100,7 +104,9 @@ export default {
   body {
     background-color: #F4F4F4;
   }
+</style>
 
+<style scoped>
   .container {
     position: relative;
     max-width: 1300px;
@@ -130,6 +136,7 @@ export default {
   	color: #fff;
   	text-transform: uppercase;
   	background-color: #395378;
+  	font-weight: 700;
   }
 
   .api-errors {

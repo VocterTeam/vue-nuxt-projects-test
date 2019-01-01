@@ -158,11 +158,13 @@ export default {
 
 </script>
 
-<style scoped>
+<style>
   body {
     background-color: #F4F4F4;
   }
+</style>
 
+<style scoped>
   .container {
     position: relative;
     max-width: 1300px;
@@ -191,7 +193,7 @@ export default {
     border-radius: 3px;
     border: 1px solid #dedede;
     padding: 18px 20px 20px 25px;
-    margin-bottom: 15px;
+    margin-bottom: 6px;
   }
 
   .project-item:last-of-type {
@@ -213,14 +215,18 @@ export default {
 
   .project-item__block--logo {
     max-width: 65px;
+    text-align: center;
+    margin-right: 0;
   }
 
   .project-item__block--name {
     flex: 2;
+    font-weight: 700;
   }
 
   .project-item__block--status {
     text-align: center;
+    font-weight: 700;
   }
 
   .project-item__block--stats {
@@ -258,6 +264,10 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+  }
+
+  .stats-row__value {
+    font-weight: 700;
   }
 
   .logo {

@@ -87,7 +87,7 @@ export default {
 }  
 </script>
 
-<style>
+<style scoped>
   .edit-modal {
     position: fixed;
     top: 0;
@@ -110,12 +110,13 @@ export default {
   }
 
   .form-edit-field {
+    width: 340px;
     padding: 10px;
   }
 
   .edit-form-label {
     display: inline-block;
-    margin-right: 25px;
+    margin-right: 55px;
   }
 
   .edit-fields {
@@ -139,6 +140,7 @@ export default {
     height: 34px;
     padding: 0 15px;
     border-radius: 4px;
+    font-weight: 700;
   }
 
   .controls-btn:hover {
